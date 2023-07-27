@@ -23,8 +23,20 @@ int main()
   char line[LINESZ];
   int count = 0;
 
+
+  // variavel
   char tipo[4];
   char v_i_or_a, p1_i_or_a, p2_i_or_a, p3_i_or_a;
+  int size_vet;
+
+  char v_p_r_or_c;
+
+  // condicional
+  char cond[3];
+  int co1, co2;
+  int countIf = 0;
+
+  int r1; // para retorno
   int size_vet;
   int countVar = 0;
 
@@ -96,7 +108,7 @@ int main()
         continue;
     }
 
-    sscanf(line, "%s v%c%d size ci%d", tipo, v_i_or_a, &countVar, &size_vet);
+    sscanf(line, "%s v%c%d size ci%d", &tipo, &v_i_or_a, &countVar, &size_vet);
 
     if (strncmp(tipo, "var", 3) == 0) {
       v_i_or_a = 'i';
@@ -132,15 +144,50 @@ int main()
 	      
         continue;
     }
+
+    // -------------------------- ATRIBUIÇÃO ------------------
+
+    // -------------------------- CHAMADA FUNÇÃO ------------------
+
+    // -------------------------- ACESSO ARRAY ------------------
     
     // -------------------------- CONDICIONAL ------------------
 
     // Verifica se é um 'if'
-    r = sscanf(line, "if v%d > v%d", &i1, &i2);
-    if (r == 2) {
-      printf("Linha %d: %s\n", count, line);
-      printf("Indices: %d e %d\n", i1, i2);
-      printf("---\n");
+    r = sscanf(line, "if %ci%d %s %ci%d", &v_p_r_or_c, &co1, &cond, &v_p_r_or_c, &co2);
+    if (r) {
+      countIf++;
+      // continua??????????????????????????????????????????????????????????????
+      fprintf(fb, "\tif%d:\n\t...\n", countIf);
+      continue;
+    }
+
+    // -------------------------- RETORNO ------------------
+
+    // Verifica se é um 'return'
+    r = sscanf(line, "return %ci%d", &v_p_r_or_c, &r1);
+    if(r){
+
+      // retorna uma variável
+      if(strncmp(v_p_r_or_c, 'v', 1) == 0)
+        // onde essa variavel ta na pilha???????????????????????????????????????????
+        fprintf(fb, "\tmovl ?(%%rbp), %%eax\n", r1);
+
+      // retorna um parâmetro
+      else if(strncmp(v_p_r_or_c, 'p', 1) == 0){
+        // se for assim, considera que os parâmetros
+        // são salvos na pilha primeiro
+        if(r1 == 1) fprintf(fb, "\tmovl -8(%%rbp), %%eax\n");
+        // ou
+        // if(r1 == 1) fprintf(fb, "\tmovl %%edi, %%eax\n");
+        // ???????????????????????????????????????????????????????
+        else if(r1 == 2) fprintf(fb, "\tmovl -16(%%rbp), %%eax\n");
+        else if(r1 == 3) fprintf(fb, "\tmovl -24(%%rbp), %%eax\n");
+      }
+
+      // retorna uma constante
+      else if(strncmp(v_p_r_or_c, 'c', 1) == 0)
+        fprintf(fb, "\tmovl $%d, %%eax\n", r1);
       continue;
     }
   }
