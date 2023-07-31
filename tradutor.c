@@ -1,63 +1,14 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+#include "end/end.h"
+#include "for/for.h"
+#include "helper/helper.h"
+#include "if/if.h"
 
 #define LINESZ 256
 #define boolean int
-
-void removeNewline(char *line)
-{
-  while (*line)
-  {
-    if (*line == '\n')
-    {
-      *line = 0;
-    }
-    else
-    {
-      line++;
-    }
-  }
-}
-
-void printLine(char *line, int count)
-{
-  printf("Linha %d: %s\n", count, line);
-}
-
-void processEnd(char *line, int count)
-{
-  printLine(line, count);
-  printf("Fim do arquivo\n");
-  printf("---\n");
-}
-
-void processFor(char *line, int count, int numberOfVariablesFilled, char variable, int init, int end, int step)
-{
-  printLine(line, count);
-
-  if (numberOfVariablesFilled == 4)
-  {
-    printf("Lido '%c' valores: %d, %d, %d\n", variable, init, end, step);
-  }
-  else if (numberOfVariablesFilled == 3)
-  {
-    printf("Lido '%c' valores: %d, %d\n", variable, init, end);
-  }
-  else if (numberOfVariablesFilled == 2)
-  {
-    printf("Lido '%c' valor: %d\n", variable, init);
-  }
-
-  printf("---\n");
-}
-
-void processIf(char *line, int count, int leftParameter, int rightParameter)
-{
-  printLine(line, count);
-  printf("Indices: %d e %d\n", leftParameter, rightParameter);
-  printf("---\n");
-}
 
 int main(int argc, char **argv)
 {
