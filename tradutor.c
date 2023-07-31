@@ -4,7 +4,8 @@
 
 #include "end/end.h"
 #include "for/for.h"
-#include "helper/helper.h"
+#include "helpers/helper.h"
+#include "helpers/registerHelper.h"
 #include "if/if.h"
 
 #define LINESZ 256

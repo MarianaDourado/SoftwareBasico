@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../helper/helper.h"
+#include "../helpers/helper.h"
 
 void processFor(char *line, int count, int numberOfVariablesFilled, char variable, int init, int end, int step)
 {

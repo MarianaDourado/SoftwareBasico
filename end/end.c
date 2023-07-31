@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../helper/helper.h"
+#include "../helpers/helper.h"
 
 void processEnd(char *line, int count)
 {

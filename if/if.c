@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../helper/helper.h"
+#include "../helpers/helper.h"
 
 void processIf(char *line, int count, int leftParameter, int rightParameter)
 {
