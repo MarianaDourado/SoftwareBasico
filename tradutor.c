@@ -15,6 +15,12 @@ void remove_newline(char *ptr)
   }
 }
 
+void alinha_pilha(int t_pilha, int alinhamento){
+  // ve se ta alinhado
+    if(t_pilha < alinhamento) t_pilha+=(alinhamento-t_pilha);
+    t_pilha+=(t_pilha%alinhamento);
+}
+
 int main()
 {
   char p1, p2, p3;
@@ -26,10 +32,10 @@ int main()
 
   // variavel
   char tipo[4];
-  char v_i_or_a, p1_i_or_a, p2_i_or_a, p3_i_or_a;
+  char i_a_or_r, p1_i_or_a, p2_i_or_a, p3_i_or_a;
   int size_vet;
 
-  char v_p_r_or_c;
+  char v_p_or_c;
 
   // condicional
   char cond[3];
@@ -42,7 +48,7 @@ int main()
 
   int countFunc = 0;
 
-  int tam_pilha, aux;
+  int tam_pilha, alinhamento, aux;
 
   FILE *fb = fopen("file.S", "a+");
 
@@ -64,6 +70,7 @@ int main()
     // verifica se a linha começa com 'function'
       if (strncmp(line, "function", 8) == 0) { 
         tam_pilha = 0;
+        alinhamento = 4;
         r = sscanf(line, "function f%d p%c%d p%c%d p%c%d", &countFunc, &p1_i_or_a, &p1, &p2_i_or_a, &p2, &p3_i_or_a, &p3);
         switch (r) {
             // não tem parametros
@@ -72,12 +79,22 @@ int main()
 
             // tem 1 parâmetro
             case 3:
+              if(p1_i_or_a == 'a'){
+                tam_pilha+=8;
+                alinhamento = 8;
+              }
+              else if(p1_i_or_a == 'i') tam_pilha+=4;
+              alinha_pilha(tam_pilha, alinhamento);
+              // NÃO SEI COMO ALINHAR ISSSOOOOOOOOOOOOOOO!!!!!!!!!
+
               tam_pilha+=8;
               fprintf(fb, "\t# p%c%d -> %d(%%rbp)\n", p1_i_or_a, p1, -tam_pilha);
               break;
 
             // tem 2 parâmetros
             case 5:
+              // ...
+
               tam_pilha+=8;
               fprintf(fb, "\t# p%c%d -> %d(%%rbp)\n", p1_i_or_a, p1, -tam_pilha);
               tam_pilha+=8;
@@ -86,7 +103,10 @@ int main()
 
             // tem 3 parâmetros  
             case 7:
-              tam_pilha+=8;
+              if(p1_i_or_a == 'a')tam_pilha+=8;
+              else if(p1_i_or_a == 'i') tam_pilha+=4;
+              //...
+              
               fprintf(fb, "\t# p%c%d -> %d(%%rbp)\n", p1_i_or_a, p1, -tam_pilha);
               tam_pilha+=8;
               fprintf(fb, "\t# p%c%d -> %d(%%rbp)\n", p2_i_or_a, p2, -tam_pilha);
@@ -108,28 +128,30 @@ int main()
         continue;
     }
 
-    sscanf(line, "%s v%c%d size ci%d", &tipo, &v_i_or_a, &countVar, &size_vet);
+    // declara vetor
+    sscanf(line, "%s v%c%d size ci%d", &tipo, &i_a_or_r, &countVar, &size_vet);
 
     if (strncmp(tipo, "var", 3) == 0) {
-      v_i_or_a = 'i';
+      i_a_or_r = 'i';
       tam_pilha += 4;
-      fprintf(fb, "\t# v%c%d -> %d(%%rbp)\n", v_i_or_a, countVar, -tam_pilha);
+      fprintf(fb, "\t# v%c%d -> %d(%%rbp)\n", i_a_or_r, countVar, -tam_pilha);
       continue;
     }
 
+    // declara registrador
     else if(strcmp(tipo, "reg") == 0){
-      v_i_or_a = 'i';
+      i_a_or_r = 'r';
       tam_pilha += 4;
-      fprintf(fb, "\t# r%c%d -> %d(%%rbp)\n", v_i_or_a, countVar, -tam_pilha);
+      fprintf(fb, "\t# r%c%d -> %d(%%rbp)\n", i_a_or_r, countVar, -tam_pilha);
       continue;
     }
 
     else if(strcmp(tipo, "vet") == 0){
-      v_i_or_a = 'a';
+      i_a_or_r = 'a';
       (tam_pilha) += 4 * size_vet;
       aux = -tam_pilha;
       for(int i = 0; i < size_vet; i++, aux += 4){
-        fprintf(fb, "\t# v%c%d[%d] -> %d(%%rbp)\n", v_i_or_a, countVar, i, aux);
+        fprintf(fb, "\t# v%c%d[%d] -> %d(%%rbp)\n", i_a_or_r, countVar, i, aux);
       }
       continue;
     }
@@ -154,7 +176,7 @@ int main()
     // -------------------------- CONDICIONAL ------------------
 
     // Verifica se é um 'if'
-    r = sscanf(line, "if %ci%d %s %ci%d", &v_p_r_or_c, &co1, &cond, &v_p_r_or_c, &co2);
+    r = sscanf(line, "if %ci%d %s %ci%d", &v_p_or_c, &co1, &cond, &v_p_or_c, &co2);
     if (r) {
       countIf++;
       // continua??????????????????????????????????????????????????????????????
@@ -165,16 +187,16 @@ int main()
     // -------------------------- RETORNO ------------------
 
     // Verifica se é um 'return'
-    r = sscanf(line, "return %ci%d", &v_p_r_or_c, &r1);
+    r = sscanf(line, "return %ci%d", &v_p_or_c, &r1);
     if(r){
 
       // retorna uma variável
-      if(strncmp(v_p_r_or_c, 'v', 1) == 0)
+      if(strncmp(v_p_or_c, 'v', 1) == 0)
         // onde essa variavel ta na pilha???????????????????????????????????????????
         fprintf(fb, "\tmovl ?(%%rbp), %%eax\n", r1);
 
       // retorna um parâmetro
-      else if(strncmp(v_p_r_or_c, 'p', 1) == 0){
+      else if(strncmp(v_p_or_c, 'p', 1) == 0){
         // se for assim, considera que os parâmetros
         // são salvos na pilha primeiro
         if(r1 == 1) fprintf(fb, "\tmovl -8(%%rbp), %%eax\n");
@@ -186,7 +208,7 @@ int main()
       }
 
       // retorna uma constante
-      else if(strncmp(v_p_r_or_c, 'c', 1) == 0)
+      else if(strncmp(v_p_or_c, 'c', 1) == 0)
         fprintf(fb, "\tmovl $%d, %%eax\n", r1);
       continue;
     }
