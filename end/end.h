@@ -1,1 +1,0 @@
-void processEnd(char *line, int count);

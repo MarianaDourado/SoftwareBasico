@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define boolean int
+#define true 1
+#define false 0
+
 void removeNewline(char *line)
 {
 	while (*line)
@@ -86,4 +90,9 @@ char *replace(char *source, char *target, char *replacement)
 
 	strcpy(temporary, source);
 	return result;
+}
+
+boolean startsWith(char *line, char *keyword)
+{
+	return strncmp(line, keyword, strlen(keyword)) == 0;
 }

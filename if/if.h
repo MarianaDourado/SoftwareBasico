@@ -1,1 +1,0 @@
-void processIf(char *line, int count, int leftParameter, int rightParameter);

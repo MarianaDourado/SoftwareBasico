@@ -2,63 +2,126 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "end/end.h"
-#include "for/for.h"
+#include "array/array.h"
+#include "conditional/conditional.h"
+#include "function/function.h"
+#include "globals/global.h"
 #include "helpers/helper.h"
 #include "helpers/registerHelper.h"
-#include "if/if.h"
+#include "variable/variable.h"
+#include "section/section.h"
 
 #define LINESZ 256
 #define boolean int
 
+FILE *file;
+
 int main(int argc, char **argv)
 {
   char line[LINESZ];
-  int count = 0;
+  int lineNumber = 0;
 
-  // variáveis do sscanf
-  int numberOfVariablesFilled;
+  int teste = 5;
 
-  //  parâmetros do if
-  int leftParameter, rightParameter;
-
-  // parâmetros do for
-  int init, end, step;
-
+  // Variáveis
   char variable1;
+
+  file = fopen("output/file.S", "w");
+
+  addData();
+  addText();
 
   // Lê uma linha por vez
   while (fgets(line, LINESZ, stdin) != NULL)
   {
-    count++;
+    lineNumber++;
     removeNewline(line);
 
-    // Verifica se line começa com 'end' (3 letras)
-    boolean isEnd = strncmp(line, "end", 3) == 0;
-    if (isEnd)
+    // ------------------------- VARIÁVEIS ---------------------------
+    if (startsWith(line, "def"))
     {
-      processEnd(line, count);
+      processVariableDeclarations(line);
       continue;
     }
 
-    // Verifica se é 'for' e quanto elementos possui
-    numberOfVariablesFilled = sscanf(line, "for %c = %d, %d, %d", &variable1, &init, &end, &step);
-    boolean isFor = numberOfVariablesFilled > 1 && numberOfVariablesFilled < 5;
-    if (isFor)
+    if (startsWith(line, "enddef"))
     {
-      processFor(line, count, numberOfVariablesFilled, variable1, init, end, step);
+      processVariableDeclarationsEnd(line);
       continue;
     }
 
-    // Verifica se é um 'if'
-    numberOfVariablesFilled = sscanf(line, "if v%d > v%d", &leftParameter, &rightParameter);
-    boolean isIf = numberOfVariablesFilled == 2;
-    if (isIf)
+    // DECLARAÇÃO
+    if (startsWith(line, "var"))
     {
-      processIf(line, count, leftParameter, rightParameter);
+      processStackVariableDeclaration(line);
+      continue;
+    }
+
+    if (startsWith(line, "vet"))
+    {
+      processArrayDeclaration(line);
+      continue;
+    }
+
+    if (startsWith(line, "reg"))
+    {
+      processRegisterVariableDeclaration(line);
+      continue;
+    }
+
+    // ATRIBUIÇÃO
+    if (startsWith(line, "v"))
+    {
+      processVariableAssignment(line);
+      continue;
+    }
+
+    // --------------------------- ARRAYS ----------------------------
+    if (startsWith(line, "get"))
+    {
+      processElementAccess(line);
+      continue;
+    }
+
+    if (startsWith(line, "set"))
+    {
+      processElementAssignment(line);
+      continue;
+    }
+
+    // ------------------------- CONDICIONAIS -----------------------
+    if (startsWith(line, "if"))
+    {
+      processConditional(line);
+      continue;
+    }
+
+    if (startsWith(line, "endif"))
+    {
+      processConditionalEnd(file);
+      continue;
+    }
+
+    // --------------------------- FUNÇÕES --------------------------
+    if (startsWith(line, "function"))
+    {
+      processFunctionDeclaration(line);
+      continue;
+    }
+
+    if (startsWith(line, "end"))
+    {
+      processFunctionEnd();
+      continue;
+    }
+
+    if (startsWith(line, "return"))
+    {
+      processFunctionReturn(line);
       continue;
     }
   }
 
+  fclose(file);
   return 0;
 }
