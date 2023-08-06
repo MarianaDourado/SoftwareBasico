@@ -23,4 +23,8 @@ void processFunctionEnd()
 {
 	fprintf(file, "\n\tleave\n");
 	fprintf(file, "\tret\n\n");
+
+	stackSize = 0;
+	registerIndex = 0;
+	emptyMap(&variableMap);
 }

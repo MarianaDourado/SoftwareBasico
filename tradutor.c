@@ -7,7 +7,7 @@
 #include "function/function.h"
 #include "globals/global.h"
 #include "helpers/helper.h"
-#include "helpers/registerHelper.h"
+// #include "helpers/stack.h"
 #include "variable/variable.h"
 #include "section/section.h"
 
@@ -15,16 +15,16 @@
 #define boolean int
 
 FILE *file;
+KeyValuePair *variableMap;
+char *variableRegisters[] = {"%r8", "%r9", "%r10", "%r11"};
+
+int stackSize = 0;
+int registerIndex = 0;
 
 int main(int argc, char **argv)
 {
   char line[LINESZ];
   int lineNumber = 0;
-
-  int teste = 5;
-
-  // Variáveis
-  char variable1;
 
   file = fopen("output/file.S", "w");
 
@@ -122,6 +122,7 @@ int main(int argc, char **argv)
     }
   }
 
+  freeMap(variableMap);
   fclose(file);
   return 0;
 }
