@@ -21,6 +21,21 @@ void removeNewline(char *line)
 	}
 }
 
+void removeComments(char *line)
+{
+	while (*line)
+	{
+		if (*line == '#')
+		{
+			*line = 0;
+		}
+		else
+		{
+			line++;
+		}
+	}
+}
+
 void printLine(char *line, int count)
 {
 	printf("Linha %d: %s\n", count, line);

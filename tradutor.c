@@ -38,6 +38,7 @@ int main(int argc, char **argv)
   {
     lineNumber++;
     removeNewline(line);
+    // removeComments(line);
 
     // ------------------------- VARIÁVEIS ---------------------------
     if (startsWith(line, "def"))
