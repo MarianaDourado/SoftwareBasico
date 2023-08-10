@@ -16,6 +16,11 @@ void processVariableDeclarationsEnd(char *line)
 {
 	KeyValuePair *tempMap = variableMap;
 
+	if (stackSize % 8 != 0)
+	{
+		stackSize += 4;
+	}
+
 	for (int i = 0; i < numberOfParameters; i++)
 	{
 		stackSize += 8;
@@ -68,6 +73,10 @@ void processArrayDeclaration(char *line)
 	sprintf(variable, "va%d", variableIndex);
 
 	stackSize += 4 * arraySize;
+	if (stackSize % 8 != 0)
+	{
+		stackSize += 4;
+	}
 
 	char stackPosition[20];
 	sprintf(stackPosition, "-%d(%%rbp)", stackSize);
