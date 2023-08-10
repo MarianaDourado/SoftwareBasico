@@ -7,7 +7,6 @@
 #include "function/function.h"
 #include "globals/global.h"
 #include "helpers/helper.h"
-// #include "helpers/stack.h"
 #include "variable/variable.h"
 #include "section/section.h"
 
@@ -16,10 +15,13 @@
 
 FILE *file;
 KeyValuePair *variableMap;
-char *variableRegisters[] = {"%r8", "%r9", "%r10", "%r11"};
+char *variableRegisters[] = {"%r8d", "%r9d", "%r10d", "%r11d"};
+char *parameterRegisters[] = {"%rdi", "%rsi", "%rdx"};
+char *integerRegisters[] = {"%edi", "%esi", "%edx"};
 
 int stackSize = 0;
 int registerIndex = 0;
+int numberOfParameters = 0;
 
 int main(int argc, char **argv)
 {

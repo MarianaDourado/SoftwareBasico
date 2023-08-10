@@ -1,8 +1,9 @@
+#pragma once
+
 struct KeyValuePair
 {
-	// int size;
-	char variable[4];
-	char assemblyReference[10];
+	char variable[5];
+	char assemblyReference[20];
 	struct KeyValuePair *next;
 };
 

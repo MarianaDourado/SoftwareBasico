@@ -12,7 +12,6 @@ void addToMap(KeyValuePair **map, const char *variable, char *assemblyReference)
 		fprintf(stderr, "Memory allocation failed\n");
 		exit(EXIT_FAILURE);
 	}
-	// newPair->size = 4;
 	strcpy(newPair->variable, variable);
 	strcpy(newPair->assemblyReference, assemblyReference);
 	newPair->next = NULL;
