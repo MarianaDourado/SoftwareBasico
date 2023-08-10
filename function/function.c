@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "../globals/global.h"
-#include "../helpers/map.h"
+#include "../helpers/helper.h"
 
 void processFunctionDeclaration(char *line)
 {
@@ -35,6 +35,21 @@ void processFunctionDeclaration(char *line)
 
 void processFunctionReturn(char *line)
 {
+	fprintf(file, "\t# %s\n", line);
+
+	char returnValue[20];
+	sscanf(line, "return %s", returnValue);
+
+	if (startsWith(returnValue, "ci"))
+	{
+		int constant;
+		sscanf(returnValue, "ci%d", &constant);
+		fprintf(file, "\tmovl $%d, %%eax\n", constant);
+	}
+	else
+	{
+		fprintf(file, "\tmovl %s, %%eax\n", getValueFromMap(variableMap, returnValue));
+	}
 }
 
 void processFunctionEnd()
