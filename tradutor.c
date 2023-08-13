@@ -1,122 +1,132 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include "array/array.h"
+#include "conditional/conditional.h"
+#include "function/function.h"
+#include "globals/global.h"
+#include "helpers/helper.h"
+#include "section/section.h"
+#include "variable/variable.h"
+
 #define LINESZ 256
+#define boolean int
 
-// Remove o '\n' do fim da linha
-void remove_newline(char *ptr) // BRUNO OK
+FILE *file;
+KeyValuePair *variableMap;
+char *variableRegisters[] = {"%r8d", "%r9d", "%r10d", "%r11d"};
+char *parameterRegisters[] = {"%rdi", "%rsi", "%rdx"};
+char *integerRegisters[] = {"%edi", "%esi", "%edx"};
+
+int stackSize = 0;
+int registerIndex = 0;
+int numberOfParameters = 0;
+int currentConditional = 0;
+
+int main(int argc, char **argv)
 {
-  while (*ptr)
-  {
-    if (*ptr == '\n')
-      *ptr = 0;
-    else
-      ptr++;
-  }
-}
+  char line[LINESZ];
+  int lineNumber = 0;
 
-int main()
-{
-  char line[256];
-  int tam_pilha = 0;
-  int vl_addrs[5] = {0}, param_addrs[3] = {0}, param_tipos[3] = {0};
+  file = fopen("output/file.S", "w");
 
-  int countIf = 0;  // conta quantos ifs
-
-  int *addrs; // salva endereços das variaveis na pulha
-
-  initial_print();
+  addData();
+  addText();
 
   // Lê uma linha por vez
   while (fgets(line, LINESZ, stdin) != NULL)
   {
-    remove_newline(line);
+    lineNumber++;
+    removeNewline(line);
+    // removeComments(line);
 
-    // Verifica se line começa com 'end' (3 letras)
-    if (strncmp(line, "end", 3) == 0)
+    // ------------------------- VARIÁVEIS ---------------------------
+    if (startsWith(line, "def"))
     {
-      // não é endif nem é enddef
-      if ((strncmp(line, "endif", 5) != 0) &&
-          (strncmp(line, "enddef", 6) != 0))
-      {
-        process_function_end();
-        continue;
-      }
-    }
-
-    // ---------------------- DEFINIÇÃO DE FUNÇÃO -------------------
-    // verifica se a linha começa com 'function'
-    if (strncmp(line, "function", 8) == 0)
-    {
-      for (int i = 0; i < 3; i++)
-      {
-        param_addrs[i] = 0;
-        param_tipos[i] = 0;
-      }
-      process_function_def(line, param_tipos);
+      processVariableDeclarations(line);
       continue;
     }
 
-    // ------------- DEFINIÇÃO DE VARIÁVEIS LOCAIS --------------
-
-    // verifica se a linha começa com 'def'
-    if (strncmp(line, "def", 3) == 0)
+    if (startsWith(line, "enddef"))
     {
-      fgets(line, LINESZ, stdin);
-      remove_newline(line);
-
-      tam_pilha = 0;
-
-      for (int i = 0; i < 5; i++)
-        vl_addrs[i] = 0;
-
-      while (strncmp(line, "enddef", 6) != 0)
-      {
-        process_local_variables(line, &tam_pilha, vl_addrs);
-        fgets(line, LINESZ, stdin);
-        remove_newline(line);
-      }
-
-      // agora é 'enddef'
-      aloca_pilha(&tam_pilha, param_tipos, param_addrs);
-
+      processVariableDeclarationsEnd(line);
       continue;
     }
 
-    // --------------------- ATRIBUIÇÃO --- CHAMADA DE FUNÇÃO -------------
-    // verifica se a linha tem atribuição simples ou com chamada de função
-    if (strstr(line, "=") != NULL)
+    // DECLARAÇÃO
+    if (startsWith(line, "var"))
     {
-      if (strstr(line, "call") != NULL)
-        process_call_attr(line, param_addrs, vl_addrs, param_tipos);
-      else
-        process_simple_attr(line, vl_addrs);
-      continue;
-    }
-    // -------------------------- ACESSO ARRAY ------------------
-    // verifica se é um get
-
-    // verifica se é um set
-
-    // -------------------------- CONDICIONAL ------------------
-
-    // Verifica se é um 'if'
-    if (strncmp(line, "if", 2) == 0)
-    {
-      countIf++;
-      process_if(line, countIf);
+      processStackVariableDeclaration(line);
       continue;
     }
 
-    // -------------------------- RETORNO ------------------
-
-    // Verifica se é um 'return'
-    if (strncmp(line, "return", 6) != 0)
+    if (startsWith(line, "vet"))
     {
-      process_return(line, addrs);
+      processArrayDeclaration(line);
+      continue;
+    }
+
+    if (startsWith(line, "reg"))
+    {
+      processRegisterVariableDeclaration(line);
+      continue;
+    }
+
+    // ATRIBUIÇÃO
+    if (startsWith(line, "v"))
+    {
+      processVariableAssignment(line);
+      continue;
+    }
+
+    // --------------------------- ARRAYS ----------------------------
+    if (startsWith(line, "get"))
+    {
+      processElementAccess(line);
+      continue;
+    }
+
+    if (startsWith(line, "set"))
+    {
+      processElementAssignment(line);
+      continue;
+    }
+
+    // ------------------------- CONDICIONAIS -----------------------
+    if (startsWith(line, "if"))
+    {
+      processConditional(line);
+      continue;
+    }
+
+    if (startsWith(line, "endif"))
+    {
+      processConditionalEnd(file);
+      continue;
+    }
+
+    // --------------------------- FUNÇÕES --------------------------
+    if (startsWith(line, "function"))
+    {
+      processFunctionDeclaration(line);
+      continue;
+    }
+
+    if (startsWith(line, "end"))
+    {
+      processFunctionEnd();
+      continue;
+    }
+
+    if (startsWith(line, "return"))
+    {
+      processFunctionReturn(line);
+      continue;
     }
   }
 
+  freeMap(variableMap);
+  fclose(file);
   return 0;
 }
