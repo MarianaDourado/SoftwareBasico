@@ -190,7 +190,7 @@ void processVariableAssignment(char *line)
 	if (numberOfParametersFilled >= 2) // Chamada de função
 	{
 		saveRegisters();
-		for (int i = 0; i < numberOfParametersFilled - 2; i++)
+		for (int i = numberOfParametersFilled - 3; i >= 0; i--)
 		{
 			processCallParameterAssignment(parameters[i], i);
 		}
