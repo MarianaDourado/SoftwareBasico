@@ -267,6 +267,11 @@ void processVariableAssignment(char *line)
 				strcpy(assemblyReference, getValueFromMap(variableMap, variables[0]));
 			}
 
+			if (startsWith(variables[0], "vi") && startsWith(variableToAssign, "vi"))
+			{
+				fprintf(file, "\tmovl %s, %%eax\n", assemblyReference);
+				sprintf(assemblyReference, "%%eax");
+			}
 			fprintf(file, "\tmovl %s, %s\n", assemblyReference, getValueFromMap(variableMap, variableToAssign));
 		}
 	}
