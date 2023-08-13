@@ -22,6 +22,7 @@ char *integerRegisters[] = {"%edi", "%esi", "%edx"};
 int stackSize = 0;
 int registerIndex = 0;
 int numberOfParameters = 0;
+int currentConditional = 0;
 
 int main(int argc, char **argv)
 {
@@ -38,7 +39,7 @@ int main(int argc, char **argv)
   {
     lineNumber++;
     removeNewline(line);
-    // removeComments(line);
+    removeComments(line);
 
     // ------------------------- VARIÁVEIS ---------------------------
     if (startsWith(line, "def"))

@@ -1,30 +1,33 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "../globals/global.h"
 #include "../helpers/helper.h"
 
-void processConditional(char *line)
+char *processRelationalOperator(char *operator)
 {
-	char operator[3];
-	char leftParameterType, rightParameterType;
-	int leftParameterIndex, rightParameterIndex;
-	int numberOfVariablesFilled = sscanf(line, "if %ci%d %s %ci%d", &leftParameterType, &leftParameterIndex, operator, & rightParameterType, &rightParameterIndex);
+	char *instruction = (char *)malloc(4); // Allocate memory for instruction
+	if (instruction == NULL)
+	{
+		fprintf(stderr, "Memory allocation failed\n");
+		exit(EXIT_FAILURE);
+	}
 
-	char instruction[3] = "j";
+	instruction[0] = 'j';
 	switch (operator[0])
 	{
 	case 'e':
-		strcat(instruction, "e");
-		break;
-	case 'n':
 		strcat(instruction, "ne");
 		break;
+	case 'n':
+		strcat(instruction, "e");
+		break;
 	case 'l':
-		strcat(instruction, "l");
+		strcat(instruction, "g");
 		break;
 	case 'g':
-		strcat(instruction, "g");
+		strcat(instruction, "l");
 		break;
 	}
 
@@ -33,19 +36,53 @@ void processConditional(char *line)
 		switch (operator[1])
 		{
 		case 't':
+			strcat(instruction, "e");
 			break;
 		case 'e':
-			strcat(instruction, "e");
 			break;
 		}
 	}
 
-	// TODO: Passar parâmetros em Assembly
-	fprintf(file, "\tcmpl %ci%d, %ci%d\n", rightParameterType, rightParameterIndex, leftParameterType, leftParameterIndex);
-	fprintf(file, "\t%s label\n", instruction);
+	return instruction;
+}
+
+void processConditional(char *line)
+{
+	fprintf(file, "\t# %s\n", line);
+
+	char operator[3];
+	char parameters[2][20];
+	int numberOfVariablesFilled = sscanf(line, "if %s %s %s", parameters[0], operator, parameters[1]);
+
+	char assemblyReferences[2][20];
+	for (int i = 0; i < 2; i++)
+	{
+		if (startsWith(parameters[i], "ci"))
+		{
+			int constantValue;
+			sscanf(parameters[i], "ci%d", &constantValue);
+
+			if (i == 1)
+			{
+				fprintf(file, "\tmovl $%d, %%ecx\n", constantValue);
+				sprintf(assemblyReferences[i], "%%ecx");
+			}
+			else
+			{
+				sprintf(assemblyReferences[i], "$%d", constantValue);
+			}
+		}
+		else
+		{
+			strcpy(assemblyReferences[i], getValueFromMap(variableMap, parameters[i]));
+		}
+	}
+
+	fprintf(file, "\tcmpl %s, %s\n", assemblyReferences[1], assemblyReferences[0]);
+	fprintf(file, "\t%s endif%d\n\n", processRelationalOperator(operator), currentConditional);
 }
 
 void processConditionalEnd()
 {
-	fprintf(file, "\tendif\n");
+	fprintf(file, "endif%d:\n", currentConditional++);
 }

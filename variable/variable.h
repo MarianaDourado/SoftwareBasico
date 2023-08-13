@@ -8,5 +8,5 @@ void processRegisterVariableDeclaration(char *line);
 void saveRegisters();
 void retrieveRegisters();
 void processCallParameterAssignment(char *parameter);
-char *processOperation(char operator);
+char *processArithmeticOperator(char operator);
 void processVariableAssignment(char *line);

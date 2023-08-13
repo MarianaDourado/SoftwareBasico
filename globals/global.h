@@ -13,3 +13,4 @@ extern char *parameterRegisters[];
 extern int stackSize;
 extern int registerIndex;
 extern int numberOfParameters;
+extern int currentConditional;

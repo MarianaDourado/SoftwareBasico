@@ -26,9 +26,7 @@ void processFunctionDeclaration(char *line)
 	for (int i = 0; i < numberOfParameters; i++)
 	{
 		sprintf(variable, "p%c%d", parameterTypes[i], i + 1);
-
 		strcpy(assignedRegister, parameterTypes[i] == 'i' ? integerRegisters[i] : parameterRegisters[i]);
-
 		addToMap(&variableMap, variable, assignedRegister);
 	}
 }

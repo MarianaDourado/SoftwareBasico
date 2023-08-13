@@ -160,7 +160,7 @@ void processCallParameterAssignment(char *parameter, int parameterIndex)
 	}
 }
 
-char *processOperation(char operator)
+char *processArithmeticOperator(char operator)
 {
 	switch (operator)
 	{
@@ -245,7 +245,7 @@ void processVariableAssignment(char *line)
 			{
 				fprintf(file, "\tmovl %s, %%eax\n", assemblyReferences[0]);
 				fprintf(file, "\tmovl %s, %%ecx\n", assemblyReferences[1]);
-				fprintf(file, "\t%s %%ecx, %%eax\n", processOperation(operator));
+				fprintf(file, "\t%s %%ecx, %%eax\n", processArithmeticOperator(operator));
 			}
 
 			fprintf(file, "\tmovl %%eax, %s\n", getValueFromMap(variableMap, variableToAssign));
