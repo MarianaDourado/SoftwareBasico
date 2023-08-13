@@ -10,7 +10,7 @@ var vi1
 vet va2 size ci30
 var vi3
 enddef
-return ci-1
+return ci-51
 end
 
 function f3 pa1 pi2
@@ -40,7 +40,7 @@ enddef
 vi1 = ci1 
 vr2 = vi1 
 vi1 = pi1 + vr2 
-vr2 = vi1 * ci-5 
+vr2 = vi1 * ci-501 
 vi3 = call f4 vr1 pa1
 return vi3
 end
@@ -78,9 +78,9 @@ vet va2 size ci10
 reg vr3
 enddef
 vi1 = pi1 + ci1
-set va2 index ci5 with ci2 # va2[5] = 2
-set pa2 index ci0 with vi1 # pa2[0] = vi1
-get va2 index ci8 to vi1 # vi1 = va2[8]
-get pa2 index ci4 to vr3 # vr3 = pa2[4]
+set va2 index ci5 with ci2
+set pa2 index ci0 with vi1
+get va2 index ci8 to vi1
+get pa2 index ci4 to vr3
 return pi1
 end
