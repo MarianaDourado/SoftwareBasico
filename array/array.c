@@ -2,6 +2,7 @@
 
 #include "../globals/global.h"
 #include "../helpers/helper.h"
+#include "array.h"
 
 void processElementAccess(char *line)
 {

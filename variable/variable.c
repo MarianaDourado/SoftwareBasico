@@ -3,6 +3,7 @@
 
 #include "../globals/global.h"
 #include "../helpers/helper.h"
+#include "variable.h"
 
 #ifndef min
 #define min(a, b) (((a) < (b)) ? (a) : (b))

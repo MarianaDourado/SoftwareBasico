@@ -1,4 +1,4 @@
-#include <stdio.h>
+#pragma once
 
 void processFunctionDeclaration(char *line);
 void processFunctionReturn(char *line);

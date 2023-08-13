@@ -7,8 +7,8 @@
 #include "function/function.h"
 #include "globals/global.h"
 #include "helpers/helper.h"
-#include "variable/variable.h"
 #include "section/section.h"
+#include "variable/variable.h"
 
 #define LINESZ 256
 #define boolean int
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
   {
     lineNumber++;
     removeNewline(line);
-    removeComments(line);
+    // removeComments(line);
 
     // ------------------------- VARIÁVEIS ---------------------------
     if (startsWith(line, "def"))

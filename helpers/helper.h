@@ -1,3 +1,5 @@
+#pragma once
+
 #define boolean int
 
 void removeNewline(char *line);

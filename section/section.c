@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "../globals/global.h"
+#include "section.h"
 
 void addData()
 {

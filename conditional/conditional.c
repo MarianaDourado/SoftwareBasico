@@ -4,6 +4,7 @@
 
 #include "../globals/global.h"
 #include "../helpers/helper.h"
+#include "conditional.h"
 
 char *processRelationalOperator(char *operator)
 {

@@ -3,6 +3,7 @@
 
 #include "../globals/global.h"
 #include "../helpers/helper.h"
+#include "function.h"
 
 void processFunctionDeclaration(char *line)
 {

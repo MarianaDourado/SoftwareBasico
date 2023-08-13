@@ -1,4 +1,4 @@
-#include <stdio.h>
+#pragma once
 
 char *processRelationalOperator(char *operator);
 void processConditional(char *line);

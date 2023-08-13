@@ -1,4 +1,4 @@
-#include <stdio.h>
+#pragma once
 
 void processVariableDeclarations(char *line);
 void processVariableDeclarationsEnd(char *line);
@@ -7,6 +7,6 @@ void processStackVariableDeclaration(char *line);
 void processRegisterVariableDeclaration(char *line);
 void saveRegisters();
 void retrieveRegisters();
-void processCallParameterAssignment(char *parameter);
+void processCallParameterAssignment(char *parameter, int parameterIndex);
 char *processArithmeticOperator(char operator);
 void processVariableAssignment(char *line);
