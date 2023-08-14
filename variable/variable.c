@@ -170,6 +170,16 @@ void processCallParameterAssignment(char *parameter, int parameterIndex)
 			fprintf(file, "\tmovq %s, %s\n", registerName, parameterRegisters[parameterIndex]);
 		}
 	}
+	else if (startsWith(parameter, "va"))
+	{
+		char registerName[20];
+		strcpy(registerName, getValueFromMap(variableMap, parameter));
+
+		if (!startsWith(registerName, parameterRegisters[parameterIndex]))
+		{
+			fprintf(file, "\tleaq %s, %s\n", registerName, parameterRegisters[parameterIndex]);
+		}
+	}
 	else
 	{
 		char registerName[20];
