@@ -6,7 +6,7 @@ Compilador desenvolvido para a disciplina de Software Básico em 2023.
 
 -   Compilar o programa:
 
-    `gcc -o tradutor *c */*.c`
+    `gcc -o tradutor *.c */*.c`
 
 -   Executar o programa:
 
