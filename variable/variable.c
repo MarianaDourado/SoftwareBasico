@@ -93,10 +93,12 @@ void processArrayDeclaration(char *line)
 	sprintf(variable, "va%d", variableIndex);
 
 	stackSize += 4 * arraySize;
+	/* tava dando erro de alinhamento
 	if (stackSize % 8 != 0)
 	{
 		stackSize += 4;
 	}
+	*/
 
 	char stackPosition[20];
 	sprintf(stackPosition, "-%d(%%rbp)", stackSize);
