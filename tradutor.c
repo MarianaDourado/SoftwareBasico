@@ -15,7 +15,7 @@
 
 FILE *file;
 KeyValuePair *variableMap;
-char *variableRegisters[] = {"%r8d", "%r9d", "%r10d", "%r11d"};
+char *variableRegisters[] = {"%r12d", "%r13d", "%r14d", "%r15d"};
 char *parameterRegisters[] = {"%rdi", "%rsi", "%rdx"};
 char *integerRegisters[] = {"%edi", "%esi", "%edx"};
 

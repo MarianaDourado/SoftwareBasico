@@ -8,8 +8,8 @@ void processElementAccess(char *line)
 {
 	fprintf(file, "\t# %s\n", line);
 
-	char arrayVariable[5];
-	char destinationVariable[5];
+	char arrayVariable[6];
+	char destinationVariable[6];
 	int elementIndex;
 
 	sscanf(line, "get %s index ci%d to %s", arrayVariable, &elementIndex, destinationVariable);
@@ -25,8 +25,8 @@ void processElementAssignment(char *line)
 {
 	fprintf(file, "\t# %s\n", line);
 
-	char destinationArray[5];
-	char valueVariable[5];
+	char destinationArray[6];
+	char valueVariable[6];
 	int elementIndex;
 
 	sscanf(line, "set %s index ci%d with %s", destinationArray, &elementIndex, valueVariable);
@@ -42,7 +42,7 @@ void processElementAssignment(char *line)
 		fprintf(file, "\tmovq %s, %%rcx\n", getValueFromMap(variableMap, destinationArray));
 	}
 
-	char position[5] = "";
+	char position[6] = "";
 
 	if (positionIndex)
 	{

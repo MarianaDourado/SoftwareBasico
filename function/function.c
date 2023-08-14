@@ -21,7 +21,7 @@ void processFunctionDeclaration(char *line)
 	fprintf(file, "\tmovq %%rsp, %%rbp\n\n");
 
 	// Parâmetros
-	char variable[5];
+	char variable[6];
 	char assignedRegister[20];
 
 	for (int i = 0; i < numberOfParameters; i++)
@@ -49,11 +49,20 @@ void processFunctionReturn(char *line)
 	{
 		fprintf(file, "\tmovl %s, %%eax\n", getValueFromMap(variableMap, returnValue));
 	}
+
+	fprintf(file, "\n");
 }
 
 void processFunctionEnd()
 {
-	fprintf(file, "\tleave\n");
+	for (int i = 0; i < registerIndex; i++)
+	{
+		char registerName[6];
+		sscanf(variableRegisters[i], "%%%[^d]d", registerName);
+		fprintf(file, "\tmovq %s, %%%s\n", getValueFromMap(variableMap, registerName), registerName);
+	}
+
+	fprintf(file, "\n\tleave\n");
 	fprintf(file, "\tret\n\n");
 
 	stackSize = 0;

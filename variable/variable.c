@@ -23,13 +23,23 @@ void processVariableDeclarationsEnd(char *line)
 		stackSize += 4;
 	}
 
-	for (int i = 0; i < numberOfParameters; i++)
+	int i;
+	char stackPosition[20];
+	char registerName[6];
+
+	for (i = 0; i < numberOfParameters; i++)
 	{
 		stackSize += 8;
-		char stackPosition[20];
 		sprintf(stackPosition, "-%d(%%rbp)", stackSize);
-		char registerName[4];
 		sscanf(parameterRegisters[i], "%%%s", registerName);
+		addToMap(&variableMap, registerName, stackPosition);
+	}
+
+	for (i = 0; i < registerIndex; i++)
+	{
+		stackSize += 8;
+		sprintf(stackPosition, "-%d(%%rbp)", stackSize);
+		sscanf(variableRegisters[i], "%%%[^d]d", registerName);
 		addToMap(&variableMap, registerName, stackPosition);
 	}
 
@@ -37,7 +47,7 @@ void processVariableDeclarationsEnd(char *line)
 	{
 		if (!startsWith(tempMap->variable, "vr") && !startsWith(tempMap->variable, "p"))
 		{
-			char position[5];
+			char position[6];
 
 			int i;
 			for (i = 0; tempMap->assemblyReference[i] != '(' && i < strlen(tempMap->assemblyReference); i++)
@@ -63,6 +73,14 @@ void processVariableDeclarationsEnd(char *line)
 	{
 		fprintf(file, "\tsubq $%d, %%rsp\n\n", stackAlignment);
 	}
+
+	for (int i = 0; i < registerIndex; i++)
+	{
+		sscanf(variableRegisters[i], "%%%[^d]d", registerName);
+		fprintf(file, "\tmovq %%%s, %s\n", registerName, getValueFromMap(variableMap, registerName));
+	}
+
+	fprintf(file, "\n");
 }
 
 void processArrayDeclaration(char *line)
@@ -71,7 +89,7 @@ void processArrayDeclaration(char *line)
 	int arraySize;
 	sscanf(line, "vet va%d size ci%d", &variableIndex, &arraySize);
 
-	char variable[5];
+	char variable[6];
 	sprintf(variable, "va%d", variableIndex);
 
 	stackSize += 4 * arraySize;
@@ -90,7 +108,7 @@ void processStackVariableDeclaration(char *line)
 {
 	int variableIndex;
 	sscanf(line, "var vi%d", &variableIndex);
-	char variable[5];
+	char variable[6];
 	sprintf(variable, "vi%d", variableIndex);
 
 	stackSize += 4;
@@ -106,7 +124,7 @@ void processRegisterVariableDeclaration(char *line)
 	int variableIndex;
 	sscanf(line, "reg vr%d", &variableIndex);
 
-	char variable[5];
+	char variable[6];
 	sprintf(variable, "vr%d", variableIndex);
 
 	addToMap(&variableMap, variable, variableRegisters[registerIndex++]);
@@ -182,7 +200,7 @@ void processVariableAssignment(char *line)
 	int numberOfParametersFilled;
 	char leftHandSide[10];
 	char variableToAssign[10];
-	char function[5];
+	char function[6];
 	char parameters[3][4];
 
 	numberOfParametersFilled = sscanf(line, "%[^call]call %s %s %s %s", leftHandSide, function, parameters[0], parameters[1], parameters[2]);

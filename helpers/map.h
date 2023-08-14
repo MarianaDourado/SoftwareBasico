@@ -2,7 +2,7 @@
 
 struct KeyValuePair
 {
-	char variable[5];
+	char variable[6];
 	char assemblyReference[20];
 	struct KeyValuePair *next;
 };
