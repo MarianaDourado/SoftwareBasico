@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "../globals/global.h"
@@ -205,10 +206,15 @@ void processVariableAssignment(char *line)
 		char operator;
 		char variables[2][4];
 
-		numberOfParametersFilled = sscanf(line, "%[^= ] = %[^ +-*/] %c %s", variableToAssign, variables[0], &operator, variables[1]);
+		numberOfParametersFilled = sscanf(line, "%[^= ] = %s %c %s", variableToAssign, variables[0], &operator, variables[1]);
 
-		if (numberOfParametersFilled == 4) // Com operação
+		if (numberOfParametersFilled == 4 && !isNumber(variables[1])) // Com operação
 		{
+			if (operator!= '+' && operator!= '-' && operator!= '*' && operator!= '/')
+			{
+				exit(1);
+			}
+
 			char assemblyReferences[2][20];
 			for (int i = 0; i < 2; i++)
 			{

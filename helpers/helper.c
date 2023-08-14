@@ -113,3 +113,25 @@ boolean startsWith(char *line, char *keyword)
 {
 	return strncmp(line, keyword, strlen(keyword)) == 0;
 }
+
+boolean isNumber(const char *str)
+{
+	int i = 0;
+
+	if (str[i] == '+' || str[i] == '-')
+	{
+		i++;
+	}
+
+	while (str[i] != '\0')
+	{
+		if (str[i] < '0' || str[i] > '9')
+		{
+			return false;
+		}
+
+		i++;
+	}
+
+	return true;
+}
